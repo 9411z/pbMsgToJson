@@ -1,0 +1,47 @@
+#pragma once
+
+#include <google/protobuf/descriptor.h>
+#include <google/protobuf/message.h>
+#include <json/json.h>
+
+namespace pavaro {
+
+class JsonToPb {
+
+public:
+    typedef ::google::protobuf::Message ProtobufMsg;
+    typedef ::google::protobuf::Reflection ProtobufReflection;
+    typedef ::google::protobuf::FieldDescriptor ProtobufFieldDescriptor;
+    typedef ::google::protobuf::Descriptor ProtobufDescriptor;
+
+public:
+    static bool json_str_to_pbmsg(const std::string &src, ProtobufMsg &dst, bool str2enum = false);
+
+    static bool json_to_pbmsg(const Json::Value &src, ProtobufMsg &dst, bool str2enum = false);
+
+    /*if enum2st is true means enum is string, else enum is int*/
+    static void pbmsg_to_json_str(const ProtobufMsg &src, std::string &dst, bool enum2str = false);
+
+    static void pbmsg_to_json(const ProtobufMsg &src, Json::Value &dst, bool enum2str = false);
+
+    /* enum is string(int) */
+    static void pbmsg_to_json_complex(const ProtobufMsg &src, std::string &dst);
+
+    static void pbmsg_to_json_complex_util(const ProtobufMsg &src, Json::Value &dst);
+
+private:
+    static bool json_to_repeat_msg(const Json::Value &json, ProtobufMsg &message,
+        const ProtobufFieldDescriptor *field, const ProtobufReflection *reflection,
+        bool str2enum = false);
+
+private:
+    static void repeat_msg_to_json(const ProtobufMsg &message, const ProtobufFieldDescriptor *field,
+        const ProtobufReflection *reflection, Json::Value &json, bool enum2str);
+
+private:
+    static void repeat_msg_to_json_complex(const ProtobufMsg &message,
+        const ProtobufFieldDescriptor *field, const ProtobufReflection *reflection,
+        Json::Value &json);
+};
+
+}  // namespace pavaro
